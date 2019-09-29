@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,13 +7,24 @@ namespace SnakeWPF
 {
     public class Snake : IEnumerable<SnakePart>
     {
+        private static readonly int SnakeStartLength = 3;
+        private static readonly int SnakeStartSpeed = 400;
+        private static readonly int SnakeSpeedThreshold = 100;
+
         private readonly List<SnakePart> _parts = new List<SnakePart>();
+
+        public Snake((int x, int y) initialGridPosition)
+        {
+            this.AddPart(initialGridPosition);
+        }
 
         public SnakePart End => _parts.First();
 
         public SnakePart Head => _parts.Last();
 
-        public int Length => _parts.Count;
+        public int Length { get; private set; } = SnakeStartLength;
+
+        public int Speed { get; private set; } = SnakeStartSpeed;
 
         public Direction Direction { get; set; } = Direction.Right;
 
@@ -29,6 +41,11 @@ namespace SnakeWPF
             return this.Head == part;
         }
 
+        public bool IsTailExceeding()
+        {
+            return _parts.Count >= this.Length;
+        }
+
         public void RemoveTailEnd()
         {
             _parts.RemoveAt(0);
@@ -41,7 +58,7 @@ namespace SnakeWPF
 
         public void AddNewHead()
         {
-            var newHeadGridPosition = (x: 0, y: 0);
+            var newHeadGridPosition = this.Head.GridPosition;
 
             switch (this.Direction)
             {
@@ -59,9 +76,14 @@ namespace SnakeWPF
                     break;
             }
 
+            this.AddPart(newHeadGridPosition);
+        }
+
+        private void AddPart((int x, int y) gridPosition)
+        {
             _parts.Add(new SnakePart
             {
-                GridPosition = newHeadGridPosition
+                GridPosition = gridPosition
             });
         }
     }

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace SnakeWPF
 {
@@ -11,19 +12,37 @@ namespace SnakeWPF
         private static readonly int GridCellSize = 20;
         private static readonly int GridWidth = 20;
         private static readonly int GridHeight = 20;
+        private static readonly (int, int) SnakeInitialGridPosition = (5, 5);
         private static readonly Brush SnakeBodyColor = Brushes.Green;
         private static readonly Brush SnakeHeadColor = Brushes.DarkGreen;
 
-        private readonly Snake _snake = new Snake();
+        private readonly DispatcherTimer _gameTimer = new DispatcherTimer();
+        
+        private Snake _snake;
 
         public MainWindow()
         {
             InitializeComponent();
+            _gameTimer.Tick += this.GameTimer_Tick;
+        }
+
+        private void SetTimerIntervalFromSnakeSpeed()
+        {
+            _gameTimer.Interval = TimeSpan.FromMilliseconds(_snake.Speed);
+        }
+
+        private void StartNewGame()
+        {
+            _snake = new Snake(SnakeInitialGridPosition);
+            _snake.AddNewHead();
+            this.SetTimerIntervalFromSnakeSpeed();
+            this.DrawSnake();
+            _gameTimer.Start();
         }
 
         private void MoveSnake()
         {
-            while (_snake.Length >= _snake.Length)
+            while (_snake.IsTailExceeding())
             {
                 GameGrid.Children.Remove(_snake.End.Shape);
                 _snake.RemoveTailEnd();
@@ -76,7 +95,7 @@ namespace SnakeWPF
                 this.DrawGridCell(nextGridPosition, gridSquareColor);
                 nextIsOdd = !nextIsOdd;
                 nextGridPosition.x = (nextGridPosition.x + 1) % GridWidth;
-                if (nextGridPosition.y == 0)
+                if (nextGridPosition.x == 0)
                 {
                     nextGridPosition.y++;
                     nextIsOdd = nextGridPosition.y % 2 == 1;
@@ -97,9 +116,15 @@ namespace SnakeWPF
             this.DrawShapeOnGrid(square, gridPosition);
         }
 
+        private void GameTimer_Tick(object sender, EventArgs e)
+        {
+            this.MoveSnake();
+        }
+
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             this.DrawInitialGrid();
+            this.StartNewGame();
         }
     }
 }
