@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -15,73 +14,79 @@ namespace SnakeWPF
         private static readonly Brush SnakeBodyColor = Brushes.Green;
         private static readonly Brush SnakeHeadColor = Brushes.DarkGreen;
 
-        private readonly List<SnakePart> _snake = new List<SnakePart>();
+        private readonly Snake _snake = new Snake();
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void DrawShapeOnArea(Shape shape, double x, double y)
+        private void MoveSnake()
         {
-            Area.Children.Add(shape);
-            Canvas.SetLeft(shape, x);
-            Canvas.SetTop(shape, y);
+            while (_snake.Length >= _snake.Length)
+            {
+                GameGrid.Children.Remove(_snake.End.Shape);
+                _snake.RemoveTailEnd();
+            }
+
+            _snake.AddNewHead();
+            this.DrawSnake();
         }
 
-        private void DrawSnakePart(SnakePart snakePart, bool isHead)
+        private void DrawShapeOnGrid(Shape shape, (int x, int y) gridPosition)
         {
-            snakePart.Shape = new Rectangle
-            {
-                Width = GridCellSize,
-                Height = GridCellSize,
-                Fill = isHead ? SnakeHeadColor : SnakeBodyColor
-            };
-            this.DrawShapeOnArea(snakePart.Shape, snakePart.Position.X, snakePart.Position.Y);
+            GameGrid.Children.Add(shape);
+            Canvas.SetLeft(shape, gridPosition.x * GridCellSize);
+            Canvas.SetTop(shape, gridPosition.y * GridCellSize);
         }
 
         private void DrawSnake()
         {
-            for (int i = 0; i < _snake.Count; i++)
+            foreach (var snakePart in _snake)
             {
-                var snakePart = _snake[i];
-                var isHead = i == _snake.Count - 1;
-                
+                var isHeadPart = _snake.IsHead(snakePart);
+
                 if (snakePart.Shape == null)
                 {
-                    this.DrawSnakePart(snakePart, isHead);
+                    snakePart.Shape = new Rectangle
+                    {
+                        Width = GridCellSize,
+                        Height = GridCellSize
+                    };
+                    this.DrawShapeOnGrid(snakePart.Shape, snakePart.GridPosition);
                 }
+
+                snakePart.Shape.Fill = isHeadPart ? SnakeHeadColor : SnakeBodyColor;
             }
         }
 
-        private void DrawInitialArea()
+        private void DrawInitialGrid()
         {
+            GameGrid.Width = GridWidth * GridCellSize;
+            GameGrid.Height = GridHeight * GridCellSize;
+
             var doneDrawing = false;
             var nextIsOdd = false;
-            var nextSquareX = 0;
-            var nextSquareY = 0;
-
-            Area.Width = GridWidth * GridCellSize;
-            Area.Height = GridHeight * GridCellSize;
+            var nextGridPosition = (x: 0, y: 0);
 
             while (!doneDrawing)
             {
                 var gridSquareColor = nextIsOdd ? Brushes.DarkGray : Brushes.LightGray;
 
-                this.DrawGridCell(nextSquareX, nextSquareY, gridSquareColor);
+                this.DrawGridCell(nextGridPosition, gridSquareColor);
                 nextIsOdd = !nextIsOdd;
-                nextSquareX = (nextSquareX + 1) % GridWidth;
-                if (nextSquareX == 0)
+                nextGridPosition.x = (nextGridPosition.x + 1) % GridWidth;
+                if (nextGridPosition.y == 0)
                 {
-                    nextSquareY++;
-                    nextIsOdd = nextSquareY % 2 == 1;
+                    nextGridPosition.y++;
+                    nextIsOdd = nextGridPosition.y % 2 == 1;
                 }
 
-                doneDrawing = nextSquareY >= GridHeight;
+                doneDrawing = nextGridPosition.y >= GridHeight;
             }
         }
 
-        private void DrawGridCell(int squareX, int squareY, Brush color)
+        private void DrawGridCell((int x, int y) gridPosition, Brush color)
         {
             var square = new Rectangle
             {
@@ -89,15 +94,12 @@ namespace SnakeWPF
                 Height = GridCellSize,
                 Fill = color
             };
-            var squarePosX = squareX * GridCellSize;
-            var squarePosY = squareY * GridCellSize;
-
-            this.DrawShapeOnArea(square, squarePosX, squarePosY);
+            this.DrawShapeOnGrid(square, gridPosition);
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            this.DrawInitialArea();
+            this.DrawInitialGrid();
         }
     }
 }

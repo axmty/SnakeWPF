@@ -8,7 +8,7 @@
         SizeToContent="WidthAndHeight"
         ContentRendered="Window_ContentRendered">
     <Border BorderBrush="Black" BorderThickness="5">
-        <Canvas Name="Area" ClipToBounds="True">
+        <Canvas Name="GameGrid" ClipToBounds="True">
             
         </Canvas>
     </Border>

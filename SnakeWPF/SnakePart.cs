@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Shapes;
+﻿using System.Windows.Shapes;
 
 namespace SnakeWPF
 {
@@ -7,6 +6,6 @@ namespace SnakeWPF
     {
         public Shape Shape { get; set; }
 
-        public Point Position { get; set; }
+        public (int x, int y) GridPosition { get; set; }
     }
 }
