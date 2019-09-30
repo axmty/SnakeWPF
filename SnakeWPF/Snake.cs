@@ -12,6 +12,8 @@ namespace SnakeWPF
 
         private readonly List<GridCell> _parts = new List<GridCell>();
 
+        private Direction _direction = Direction.Right;
+
         public Snake((int x, int y) initialGridPosition)
         {
             this.AddPart(initialGridPosition);
@@ -25,7 +27,24 @@ namespace SnakeWPF
 
         public int Speed { get; private set; } = SnakeStartSpeed;
 
-        public Direction Direction { get; set; } = Direction.Right;
+        public Direction Direction
+        {
+            get
+            {
+                return _direction;
+            }
+
+            set
+            {
+                if ((value == Direction.Left && _direction != Direction.Right) ||
+                    (value == Direction.Right && _direction != Direction.Left) ||
+                    (value == Direction.Up && _direction != Direction.Down) ||
+                    (value == Direction.Down && _direction != Direction.Up))
+                {
+                    _direction = value;
+                }
+            }
+        }
 
         public bool IsTailExceeding()
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace SnakeWPF
@@ -70,6 +71,25 @@ namespace SnakeWPF
         {
             _drawManager.DrawEmptyInitialGrid(GridWidth, GridHeight);
             this.StartNewGame();
+        }
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Up:
+                    _snake.Direction = Direction.Up;
+                    break;
+                case Key.Down:
+                    _snake.Direction = Direction.Down;
+                    break;
+                case Key.Left:
+                    _snake.Direction = Direction.Left;
+                    break;
+                case Key.Right:
+                    _snake.Direction = Direction.Right;
+                    break;
+            }
         }
     }
 }
