@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="SnakeWPF - Score: 0"
         SizeToContent="WidthAndHeight"
         ContentRendered="Window_ContentRendered"
         KeyUp="Window_KeyUp">

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -38,6 +39,17 @@ namespace SnakeWPF
                 }
 
                 snakePart.Shape.Fill = isHeadPart ? SnakeHeadColor : SnakeBodyColor;
+            }
+        }
+
+        public void CleanSnakeShapes(Snake snake)
+        {
+            foreach (var part in snake)
+            {
+                if (part.Shape != null)
+                {
+                    this.RemoveShape(part.Shape);
+                }
             }
         }
 

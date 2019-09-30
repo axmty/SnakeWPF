@@ -7,6 +7,7 @@ namespace SnakeWPF
 {
     public partial class MainWindow : Window
     {
+        private static readonly string WindowTitleTemplate = "SnakeWPF - Score: {0} - Game speed: {1}";
         private static readonly int GridWidth = 20;
         private static readonly int GridHeight = 20;
         private static readonly (int, int) SnakeInitialGridPosition = (5, 5);
@@ -16,6 +17,7 @@ namespace SnakeWPF
         
         private Snake _snake;
         private GridCell _food;
+        private int _score = 0;
 
         public MainWindow()
         {
@@ -29,13 +31,30 @@ namespace SnakeWPF
             _gameTimer.Interval = TimeSpan.FromMilliseconds(_snake.Speed);
         }
 
+        private void Clean()
+        {
+            if (_snake != null)
+            {
+                _drawManager.CleanSnakeShapes(_snake);
+            }
+
+            if (_food != null)
+            {
+                _drawManager.RemoveShape(_food.Shape);
+            }
+
+            _score = 0;
+        }
+
         private void StartNewGame()
         {
+            this.Clean();
             _snake = new Snake(SnakeInitialGridPosition);
             _snake.AddNewHead();
             _drawManager.DrawSnake(_snake);
             this.CreateNewFood();
             this.SyncTimerToSnakeSpeed();
+            this.UpdateGameStatus();
             _gameTimer.Start();
         }
 
@@ -49,6 +68,7 @@ namespace SnakeWPF
 
             _snake.AddNewHead();
             _drawManager.DrawSnake(_snake);
+            this.CheckCollision();
         }
 
         private void CreateNewFood()
@@ -61,6 +81,48 @@ namespace SnakeWPF
             _food = FoodManager.CreateRandomFood(GridWidth, GridHeight, _snake);
             _drawManager.DrawFood(_food);
         }
+
+        private void CheckCollision()
+        {
+            var snakeHeadPosition = _snake.Head.GridPosition;
+
+            if (snakeHeadPosition == _food.GridPosition)
+            {
+                this.EatFood();
+            }
+            else if (this.IsOutsideGrid(snakeHeadPosition) || _snake.HasBodyCollision())
+            {
+                this.EndGame();
+            }
+        }
+
+        private void EndGame()
+        {
+            _gameTimer.Stop();
+            MessageBox.Show("You died! Press Space to start a new game!");
+        }
+
+        private bool IsOutsideGrid((int x, int y) position)
+        {
+            return position.x < 0
+                || position.x >= GridWidth
+                || position.y < 0
+                || position.y >= GridHeight;
+        }
+
+        private void UpdateGameStatus()
+        {
+            this.Title = string.Format(WindowTitleTemplate, _score, _snake.Speed);
+        }
+
+        private void EatFood()
+        {
+            _snake.Grow();
+            this.SyncTimerToSnakeSpeed();
+            _score++;
+            this.CreateNewFood();
+            this.UpdateGameStatus();
+        } 
 
         private void GameTimer_Tick(object sender, EventArgs e)
         {
@@ -88,6 +150,9 @@ namespace SnakeWPF
                     break;
                 case Key.Right:
                     _snake.Direction = Direction.Right;
+                    break;
+                case Key.Space:
+                    this.StartNewGame();
                     break;
             }
         }

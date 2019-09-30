@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -82,6 +83,24 @@ namespace SnakeWPF
             }
 
             this.AddPart(newHeadGridPosition);
+        }
+
+        public bool HasBodyCollision()
+        {
+            var (headX, headY) = this.Head.GridPosition;
+            var collisionBodyPart = _parts
+                .Take(_parts.Count - 1)
+                .FirstOrDefault(p => p.GridPosition.x == headX && p.GridPosition.y == headY);
+
+            return collisionBodyPart != null;
+        }
+
+        public void Grow()
+        {
+            this.Length++;
+
+            var newSpeed = this.Speed - (this.Length - SnakeStartLength) * 2;
+            this.Speed = Math.Max(SnakeSpeedThreshold, newSpeed);
         }
 
         private void AddPart((int x, int y) gridPosition)
