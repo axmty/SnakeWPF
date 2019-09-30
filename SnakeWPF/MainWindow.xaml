@@ -6,7 +6,11 @@
         mc:Ignorable="d"
         SizeToContent="WidthAndHeight"
         ContentRendered="Window_ContentRendered"
-        KeyUp="Window_KeyUp">
+        KeyUp="Window_KeyUp"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        Background="DarkGray"
+        MouseDown="Window_MouseDown">
     <Border BorderBrush="Black" BorderThickness="5">
         <Canvas Name="GameGrid" ClipToBounds="True">
             

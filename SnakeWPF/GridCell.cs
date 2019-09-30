@@ -6,6 +6,6 @@ namespace SnakeWPF
     {
         public Shape Shape { get; set; }
 
-        public (int x, int y) GridPosition { get; set; }
+        public (int x, int y) Position { get; set; }
     }
 }

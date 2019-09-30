@@ -13,7 +13,7 @@ namespace SnakeWPF
 
             foreach (var snakePart in snake)
             {
-                if (snakePart.GridPosition.x == foodX && snakePart.GridPosition.y == foodY)
+                if (snakePart.Position.x == foodX && snakePart.Position.y == foodY)
                 {
                     return CreateRandomFood(gridWidth, gridHeight, snake);
                 }
@@ -21,7 +21,7 @@ namespace SnakeWPF
 
             return new GridCell
             {
-                GridPosition = (foodX, foodY)
+                Position = (foodX, foodY)
             };
         }
     }

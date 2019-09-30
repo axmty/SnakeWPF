@@ -35,7 +35,7 @@ namespace SnakeWPF
                         Width = GridCellSize,
                         Height = GridCellSize
                     };
-                    this.DrawShapeOnGrid(snakePart.Shape, snakePart.GridPosition);
+                    this.DrawShapeOnGrid(snakePart.Shape, snakePart.Position);
                 }
 
                 snakePart.Shape.Fill = isHeadPart ? SnakeHeadColor : SnakeBodyColor;
@@ -87,7 +87,7 @@ namespace SnakeWPF
                 Height = GridCellSize,
                 Fill = FoodColor
             };
-            this.DrawShapeOnGrid(food.Shape, food.GridPosition);
+            this.DrawShapeOnGrid(food.Shape, food.Position);
         }
 
         public void RemoveShape(Shape shape)

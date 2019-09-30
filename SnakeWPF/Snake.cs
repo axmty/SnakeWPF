@@ -64,7 +64,7 @@ namespace SnakeWPF
 
         public void AddNewHead()
         {
-            var newHeadGridPosition = this.Head.GridPosition;
+            var newHeadGridPosition = this.Head.Position;
 
             switch (this.Direction)
             {
@@ -87,10 +87,10 @@ namespace SnakeWPF
 
         public bool HasBodyCollision()
         {
-            var (headX, headY) = this.Head.GridPosition;
+            var (headX, headY) = this.Head.Position;
             var collisionBodyPart = _parts
                 .Take(_parts.Count - 1)
-                .FirstOrDefault(p => p.GridPosition.x == headX && p.GridPosition.y == headY);
+                .FirstOrDefault(p => p.Position.x == headX && p.Position.y == headY);
 
             return collisionBodyPart != null;
         }
@@ -107,7 +107,7 @@ namespace SnakeWPF
         {
             _parts.Add(new GridCell
             {
-                GridPosition = gridPosition
+                Position = gridPosition
             });
         }
 

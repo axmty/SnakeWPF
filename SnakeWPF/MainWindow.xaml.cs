@@ -88,9 +88,9 @@ namespace SnakeWPF
 
         private void CheckCollision()
         {
-            var snakeHeadPosition = _snake.Head.GridPosition;
+            var snakeHeadPosition = _snake.Head.Position;
 
-            if (snakeHeadPosition == _food.GridPosition)
+            if (snakeHeadPosition == _food.Position)
             {
                 this.EatFood();
             }
@@ -159,6 +159,11 @@ namespace SnakeWPF
                     this.StartNewGame();
                     break;
             }
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }
 }
