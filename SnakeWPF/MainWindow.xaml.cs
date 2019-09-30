@@ -49,6 +49,7 @@ namespace SnakeWPF
         private void StartNewGame()
         {
             this.Clean();
+            BorderWelcomeMessage.Visibility = Visibility.Collapsed;
 
             _snake = new Snake(SnakeInitialGridPosition);
             _snake.AddNewHead();
@@ -137,7 +138,6 @@ namespace SnakeWPF
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             _drawManager.DrawEmptyInitialGrid(GridWidth, GridHeight);
-            this.StartNewGame();
         }
 
         private void Window_KeyUp(object sender, KeyEventArgs e)

@@ -50,9 +50,40 @@
                     Padding="10,0">X</Button>
         </Grid>
 
-        <Border BorderBrush="Black" BorderThickness="5">
+        <Border BorderBrush="DarkGray" BorderThickness="5">
             <Canvas Name="GameGrid" ClipToBounds="True">
+                <Border BorderBrush="Silver" 
+                        BorderThickness="2" 
+                        Width="300" 
+                        Height="300" 
+                        Canvas.Left="50" 
+                        Canvas.Top="50" 
+                        Name="BorderWelcomeMessage"
+                        Panel.ZIndex="1">
+                    <StackPanel Orientation="Vertical" Background="AliceBlue">
+                        <TextBlock FontWeight="Bold" 
+                                   FontSize="50"
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,20,0,0">
+                            SnakeWPF
+                        </TextBlock>
 
+                        <TextBlock TextWrapping="Wrap" 
+                                   Margin="20" 
+                                   FontSize="16">
+                            Use the Arrow keys to control the snake.
+                            Make it eat the red apples, but be sure not to crash
+                            into the walls or the tail of the snake!
+                        </TextBlock>
+
+                        <TextBlock FontWeight="Bold" 
+                                   HorizontalAlignment="Center" 
+                                   FontSize="24" 
+                                   Foreground="Maroon">
+                            Press SPACE to start!
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
             </Canvas>
         </Border>
     </DockPanel>
