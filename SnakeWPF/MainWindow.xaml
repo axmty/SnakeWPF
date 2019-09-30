@@ -11,9 +11,49 @@
         WindowStyle="None"
         Background="DarkGray"
         MouseDown="Window_MouseDown">
-    <Border BorderBrush="Black" BorderThickness="5">
-        <Canvas Name="GameGrid" ClipToBounds="True">
+    <DockPanel Background="DarkGray">
+        <Grid DockPanel.Dock="Top" Name="PanelTitleBar">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontFamily" Value="Consolas" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontSize" Value="24" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Style>
+            </Grid.Resources>
+
+            <WrapPanel Margin="10,0,0,0">
+                <TextBlock>Score:</TextBlock>
+                <TextBlock Name="TextBlockStatusScore">0</TextBlock>
+            </WrapPanel>
             
-        </Canvas>
-    </Border>
+            <WrapPanel Grid.Column="1">
+                <TextBlock>Speed:</TextBlock>
+                <TextBlock Name="TextBlockStatusSpeed">0</TextBlock>
+            </WrapPanel>
+            
+            <Button Grid.Column="2"
+                    DockPanel.Dock="Right"
+                    Background="Transparent"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    FontSize="20"
+                    BorderThickness="0"
+                    Name="ButtonClose"
+                    Click="ButtonClose_Click"
+                    Padding="10,0">X</Button>
+        </Grid>
+
+        <Border BorderBrush="Black" BorderThickness="5">
+            <Canvas Name="GameGrid" ClipToBounds="True">
+
+            </Canvas>
+        </Border>
+    </DockPanel>
 </Window>

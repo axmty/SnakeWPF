@@ -116,7 +116,8 @@ namespace SnakeWPF
 
         private void UpdateGameStatus()
         {
-            this.Title = string.Format(WindowTitleTemplate, _score, _snake.Speed);
+            TextBlockStatusScore.Text = _score.ToString();
+            TextBlockStatusSpeed.Text = _snake.Speed.ToString();
         }
 
         private void EatFood()
@@ -164,6 +165,11 @@ namespace SnakeWPF
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
+        }
+
+        private void ButtonClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
