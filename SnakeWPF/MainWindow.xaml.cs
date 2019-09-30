@@ -49,12 +49,16 @@ namespace SnakeWPF
         private void StartNewGame()
         {
             this.Clean();
+
             _snake = new Snake(SnakeInitialGridPosition);
             _snake.AddNewHead();
             _drawManager.DrawSnake(_snake);
+
             this.CreateNewFood();
-            this.SyncTimerToSnakeSpeed();
+
             this.UpdateGameStatus();
+
+            this.SyncTimerToSnakeSpeed();
             _gameTimer.Start();
         }
 
@@ -118,8 +122,8 @@ namespace SnakeWPF
         private void EatFood()
         {
             _snake.Grow();
-            this.SyncTimerToSnakeSpeed();
             _score++;
+            this.SyncTimerToSnakeSpeed();
             this.CreateNewFood();
             this.UpdateGameStatus();
         } 
