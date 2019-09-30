@@ -1,32 +1,29 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace SnakeWPF
 {
     public partial class MainWindow : Window
     {
-        private static readonly int GridCellSize = 20;
         private static readonly int GridWidth = 20;
         private static readonly int GridHeight = 20;
         private static readonly (int, int) SnakeInitialGridPosition = (5, 5);
-        private static readonly Brush SnakeBodyColor = Brushes.Green;
-        private static readonly Brush SnakeHeadColor = Brushes.DarkGreen;
 
+        private readonly DrawManager _drawManager;
         private readonly DispatcherTimer _gameTimer = new DispatcherTimer();
         
         private Snake _snake;
+        private GridCell _food;
 
         public MainWindow()
         {
             InitializeComponent();
             _gameTimer.Tick += this.GameTimer_Tick;
+            _drawManager = new DrawManager(GameGrid);
         }
 
-        private void SetTimerIntervalFromSnakeSpeed()
+        private void SyncTimerToSnakeSpeed()
         {
             _gameTimer.Interval = TimeSpan.FromMilliseconds(_snake.Speed);
         }
@@ -35,8 +32,9 @@ namespace SnakeWPF
         {
             _snake = new Snake(SnakeInitialGridPosition);
             _snake.AddNewHead();
-            this.SetTimerIntervalFromSnakeSpeed();
-            this.DrawSnake();
+            _drawManager.DrawSnake(_snake);
+            this.CreateNewFood();
+            this.SyncTimerToSnakeSpeed();
             _gameTimer.Start();
         }
 
@@ -44,76 +42,23 @@ namespace SnakeWPF
         {
             while (_snake.IsTailExceeding())
             {
-                GameGrid.Children.Remove(_snake.End.Shape);
+                _drawManager.RemoveShape(_snake.End.Shape);
                 _snake.RemoveTailEnd();
             }
 
             _snake.AddNewHead();
-            this.DrawSnake();
+            _drawManager.DrawSnake(_snake);
         }
 
-        private void DrawShapeOnGrid(Shape shape, (int x, int y) gridPosition)
+        private void CreateNewFood()
         {
-            GameGrid.Children.Add(shape);
-            Canvas.SetLeft(shape, gridPosition.x * GridCellSize);
-            Canvas.SetTop(shape, gridPosition.y * GridCellSize);
-        }
-
-        private void DrawSnake()
-        {
-            foreach (var snakePart in _snake)
+            if (_food != null)
             {
-                var isHeadPart = _snake.IsHead(snakePart);
-
-                if (snakePart.Shape == null)
-                {
-                    snakePart.Shape = new Rectangle
-                    {
-                        Width = GridCellSize,
-                        Height = GridCellSize
-                    };
-                    this.DrawShapeOnGrid(snakePart.Shape, snakePart.GridPosition);
-                }
-
-                snakePart.Shape.Fill = isHeadPart ? SnakeHeadColor : SnakeBodyColor;
+                _drawManager.RemoveShape(_food.Shape);
             }
-        }
 
-        private void DrawInitialGrid()
-        {
-            GameGrid.Width = GridWidth * GridCellSize;
-            GameGrid.Height = GridHeight * GridCellSize;
-
-            var doneDrawing = false;
-            var nextIsOdd = false;
-            var nextGridPosition = (x: 0, y: 0);
-
-            while (!doneDrawing)
-            {
-                var gridSquareColor = nextIsOdd ? Brushes.DarkGray : Brushes.LightGray;
-
-                this.DrawGridCell(nextGridPosition, gridSquareColor);
-                nextIsOdd = !nextIsOdd;
-                nextGridPosition.x = (nextGridPosition.x + 1) % GridWidth;
-                if (nextGridPosition.x == 0)
-                {
-                    nextGridPosition.y++;
-                    nextIsOdd = nextGridPosition.y % 2 == 1;
-                }
-
-                doneDrawing = nextGridPosition.y >= GridHeight;
-            }
-        }
-
-        private void DrawGridCell((int x, int y) gridPosition, Brush color)
-        {
-            var square = new Rectangle
-            {
-                Width = GridCellSize,
-                Height = GridCellSize,
-                Fill = color
-            };
-            this.DrawShapeOnGrid(square, gridPosition);
+            _food = FoodManager.CreateRandomFood(GridWidth, GridHeight, _snake);
+            _drawManager.DrawFood(_food);
         }
 
         private void GameTimer_Tick(object sender, EventArgs e)
@@ -123,7 +68,7 @@ namespace SnakeWPF
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            this.DrawInitialGrid();
+            _drawManager.DrawEmptyInitialGrid(GridWidth, GridHeight);
             this.StartNewGame();
         }
     }

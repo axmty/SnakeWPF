@@ -2,7 +2,7 @@
 
 namespace SnakeWPF
 {
-    public class SnakePart
+    public class GridCell
     {
         public Shape Shape { get; set; }
 
