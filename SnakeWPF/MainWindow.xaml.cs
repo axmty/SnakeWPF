@@ -7,7 +7,6 @@ namespace SnakeWPF
 {
     public partial class MainWindow : Window
     {
-        private static readonly string WindowTitleTemplate = "SnakeWPF - Score: {0} - Game speed: {1}";
         private static readonly int GridWidth = 20;
         private static readonly int GridHeight = 20;
         private static readonly (int, int) SnakeInitialGridPosition = (5, 5);
@@ -21,10 +20,13 @@ namespace SnakeWPF
 
         public MainWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             _gameTimer.Tick += this.GameTimer_Tick;
             _drawManager = new DrawManager(GameGrid);
+            this.HighScoreList.Load();
         }
+
+        public HighScoreList HighScoreList { get; } = new HighScoreList();
 
         private void SyncTimerToSnakeSpeed()
         {
@@ -46,10 +48,17 @@ namespace SnakeWPF
             _score = 0;
         }
 
+        private void HideBorderControls()
+        {
+            BorderWelcomeMessage.Visibility = Visibility.Collapsed;
+            BorderHighScoreList.Visibility = Visibility.Collapsed;
+            BorderEndOfGame.Visibility = Visibility.Collapsed;
+        }
+
         private void StartNewGame()
         {
             this.Clean();
-            BorderWelcomeMessage.Visibility = Visibility.Collapsed;
+            this.HideBorderControls();
 
             _snake = new Snake(SnakeInitialGridPosition);
             _snake.AddNewHead();
@@ -103,8 +112,18 @@ namespace SnakeWPF
 
         private void EndGame()
         {
+            if (_score > 0 && this.HighScoreList.CanAdd(_score))
+            {
+                BorderNewHighScore.Visibility = Visibility.Visible;
+                TextBoxPlayerName.Focus();
+            }
+            else
+            {
+                TextBlockFinalScore.Text = _score.ToString();
+                BorderEndOfGame.Visibility = Visibility.Visible;
+            }
+
             _gameTimer.Stop();
-            MessageBox.Show("You died! Press Space to start a new game!");
         }
 
         private bool IsOutsideGrid((int x, int y) position)
@@ -170,6 +189,21 @@ namespace SnakeWPF
         private void ButtonClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void ButtonAddToHighScoreList_Click(object sender, RoutedEventArgs e)
+        {
+            this.HighScoreList.Add(TextBoxPlayerName.Text, _score);
+            this.HighScoreList.Save();
+
+            BorderNewHighScore.Visibility = Visibility.Collapsed;
+            BorderHighScoreList.Visibility = Visibility.Visible;
+        }
+
+        private void ButtonShowHighScoreList_Click(object sender, RoutedEventArgs e)
+        {
+            BorderWelcomeMessage.Visibility = Visibility.Collapsed;
+            BorderHighScoreList.Visibility = Visibility.Visible;
         }
     }
 }
